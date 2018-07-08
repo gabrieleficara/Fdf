@@ -16,13 +16,16 @@ LIB = fdf.a
 
 LIB2 = libftprintf/libftprintf.a
 
-FRAME = -lmlx -framework OpenGL -framework AppKit
+LIB3 = minilibx
+
+FRAME = -lmlx -L $(LIB3) -framework OpenGL -framework AppKit
 
 FLAGS = -Wall -Wextra -Werror -g
 
 CC = gcc
 
-INC = -I includes -I libftprintf/includes/
+INC = -I includes -I libftprintf/includes/ -I $(LIB3)
+
 
 SRC = sources/fdf.c \
 	  sources/parsing.c \
@@ -40,9 +43,10 @@ all : $(NAME)
 
 $(NAME) : $(OBJ) Makefile
 	@make -C libftprintf
+	@make -C $(LIB3) 
 	@ar rc $(LIB) $(OBJ)
 	@ranlib $(LIB)
-	@$(CC) $(FLAGS) -o $(NAME) $(LIB) $(LIB2) $(LIB3) $(FRAME)
+	@$(CC) $(FLAGS) -o $(NAME) $(LIB) $(LIB2) $(LIB3)/libmlx.a $(FRAME)
 	@echo "Creating $(NAME)"
 
 %.o: %.c
@@ -50,6 +54,7 @@ $(NAME) : $(OBJ) Makefile
 
 clean :
 	@make clean -C libftprintf
+	@make clean -C $(LIB3) 
 	@rm -rf $(OBJ)
 	@echo "Removing $(NAME) objects"
 
